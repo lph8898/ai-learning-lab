@@ -1,47 +1,55 @@
 """
-Simple Console Chatbot (Starter Version)
+AI Chatbot – OpenAI Version (v2)
 
-This chatbot:
-- Runs in the terminal
-- Uses simple rules to respond
-- Is designed to be upgraded later with real AI APIs
+This version:
+- Uses the OpenAI API for real AI responses
+- Logs every conversation to conversation_log.txt
+- Keeps a simple, clean structure for learning
 """
 
-import textwrap
+import os
+from openai import OpenAI
+
+# Load API key from environment variable
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 def print_banner():
-    banner = """
-    ==============================
-          AI Chatbot (Demo)
-    ==============================
-    Type 'quit' to exit.
+    print(
+        "\n==============================\n"
+        "      AI Chatbot (OpenAI)\n"
+        "==============================\n"
+        "Type 'quit' to exit.\n"
+    )
+
+
+def get_ai_response(user_input: str) -> str:
     """
-    print(textwrap.dedent(banner))
-
-
-def get_bot_response(user_input: str) -> str:
+    Calls OpenAI's API to generate a response.
+    Falls back to a safe message if something goes wrong.
     """
-    Very simple rule-based responses.
-    Later, you can replace this with a real AI model call.
-    """
-    text = user_input.lower().strip()
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful learning-lab assistant."},
+                {"role": "user", "content": user_input},
+            ],
+        )
 
-    if text in ("hi", "hello", "hey"):
-        return "Hello! I'm your learning-lab chatbot. What are you exploring today?"
-    if "help" in text:
-        return "You can ask me about AI learning, projects, or just chat casually."
-    if "bbc" in text:
-        return "Brisbane Boys’ College is a great school with strong academics."
-    if "ai" in text and "learn" in text:
-        return "A good way to learn AI is to build small projects, just like this one."
-    if "thank" in text:
-        return "You're welcome! Keep experimenting—that's how you get good at this."
-    if text in ("quit", "exit"):
-        return "quit"  # special signal to exit
+        return response.choices[0].message.content
 
-    # Default fallback
-    return "Interesting! Tell me more, or ask me something about AI or projects."
+    except Exception as e:
+        return f"(AI error) Something went wrong: {e}"
+
+
+def log_conversation(user_input: str, bot_response: str):
+    with open("conversation_log.txt", "a") as log:
+        log.write(f"You: {user_input}\n")
+        log.write(f"Bot: {bot_response}\n")
+        log.write("-" * 40 + "\n")
 
 
 def main():
@@ -50,22 +58,15 @@ def main():
     while True:
         user_input = input("You: ")
 
-        if not user_input.strip():
-            continue
-
-        response = get_bot_response(user_input)
-
-        if response == "quit":
-            print("Bot: Goodbye! See you back in the AI Learning Lab.")
+        if user_input.lower().strip() in ("quit", "exit"):
+            print("Bot: Goodbye! See you next time.")
             break
 
-        print(f"Bot: {response}")
+        bot_response = get_ai_response(user_input)
 
-        # Save conversation to a log file
-        with open("conversation_log.txt", "a") as log:
-            log.write(f"You: {user_input}\n")
-            log.write(f"Bot: {response}\n")
-            log.write("-" * 40 + "\n")
+        print(f"Bot: {bot_response}")
+
+        log_conversation(user_input, bot_response)
 
 
 if __name__ == "__main__":
