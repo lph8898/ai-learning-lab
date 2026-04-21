@@ -1,0 +1,4 @@
+# Currently no external dependencies.
+# This file exists so you can add libraries later, e.g.:
+# openai
+# requests
