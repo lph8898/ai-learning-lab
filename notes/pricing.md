@@ -1,0 +1,2 @@
+# Pricing
+Content coming soon
