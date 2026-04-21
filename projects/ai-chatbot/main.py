@@ -61,6 +61,12 @@ def main():
 
         print(f"Bot: {response}")
 
+        # Save conversation to a log file
+        with open("conversation_log.txt", "a") as log:
+            log.write(f"You: {user_input}\n")
+            log.write(f"Bot: {response}\n")
+            log.write("-" * 40 + "\n")
+
 
 if __name__ == "__main__":
     main()
