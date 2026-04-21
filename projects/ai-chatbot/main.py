@@ -31,6 +31,8 @@ def get_bot_response(user_input: str) -> str:
         return "Hello! I'm your learning-lab chatbot. What are you exploring today?"
     if "help" in text:
         return "You can ask me about AI learning, projects, or just chat casually."
+    if "bbc" in text:
+        return "Brisbane Boys’ College is a great school with strong academics."
     if "ai" in text and "learn" in text:
         return "A good way to learn AI is to build small projects, just like this one."
     if "thank" in text:
